@@ -6,15 +6,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Solution {
-/*
+class Aroma implements Comparable<Aroma> {
+	int distributionPeriod;
+	int smellTime;
+	
+	public Aroma(int distributionPeriod, int smellTime) {
+		super();
+		this.distributionPeriod = distributionPeriod;
+		this.smellTime = smellTime;
+	}
+	
+	public int compareTo(Aroma aroma) {
+		return aroma.smellTime - this.smellTime;
+	}
+}
 
- */
+public class Solution {
 	
 	static int NUMBER_OF_AROMA;
-	static int[] DURATION = new int[1000];
-	static int[] TIME = new int[1000];
-	static int ANSWER;
+	static int[] DISTRIBUTION_PERIODS = new int[1000];
+	static int[] SMELL_TIMES = new int[1000];
+	static Aroma[] AROMAS;
+	static Aroma[] SORT_AROMAS;
+	static int MAX_SMELL_TIME;
 	
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
@@ -23,15 +37,17 @@ public class Solution {
 		
 		for (int i = 1; i <= testCase; i++) {
 			NUMBER_OF_AROMA = input.nextInt();
+			AROMAS = new Aroma[NUMBER_OF_AROMA];
+			SORT_AROMAS = new Aroma[NUMBER_OF_AROMA];
 			
 			for (int j = 0; j < NUMBER_OF_AROMA; j++) {
-				DURATION[j] = input.nextInt();
-				TIME[j] = input.nextInt();
+				DISTRIBUTION_PERIODS[j] = input.nextInt();
+				SMELL_TIMES[j] = input.nextInt();
 			}
 			
 			findMaximumDuration(0);
 			
-			System.out.println("#" + i + " " + ANSWER);
+			System.out.println("#" + i + " " + MAX_SMELL_TIME);
 		}
 	}
 	
@@ -40,11 +56,11 @@ public class Solution {
 			if (i == order) {
 				continue;
 			}
-			if (DURATION[i] < 0) {
+			if (DISTRIBUTION_PERIODS[i] < 0) {
 				continue;
 			}
 			
-			DURATION[i] = DURATION[i] - TIME[order];
+			DISTRIBUTION_PERIODS[i] = DISTRIBUTION_PERIODS[i] - SMELL_TIMES[order];
 			
 			if (order < NUMBER_OF_AROMA) {
 				findMaximumDuration(order+1);
