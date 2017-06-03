@@ -1,11 +1,5 @@
 package nquean;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-
 public class Main {
 	static int boardSize = 8;
 	static int solCnt;
@@ -29,7 +23,7 @@ public class Main {
 				continue loop;
 			}
 			
-			//´ë°¢¼± ¹æÇâ¿¡ ÄýÀÌ Á¸ÀçÇÏ¸é °¡ÁöÄ¡±â
+			//ï¿½ë°¢ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½
 			for ( int j = 0; j < row; j++ ) {
 				if ( Math.abs(row - j) == Math.abs(i - sol[j]) ) {
 					continue loop;
@@ -53,32 +47,4 @@ public class Main {
 	private static boolean isSolution(int row) {
 		return (row == boardSize);
 	}
-
-	class InputReader {
-		public BufferedReader reader;
-		public StringTokenizer tokenizer;
-		
-		public InputReader(InputStream stream) {
-			reader = new BufferedReader(new InputStreamReader(stream), 32768);
-			tokenizer = null;
-		}
-		
-		public String next() {
-			while ( tokenizer == null || !tokenizer.hasMoreTokens() ) {
-				try {
-					tokenizer = new StringTokenizer(reader.readLine());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			return tokenizer.nextToken();
-		}
-		
-		public int nextInt() {
-			return Integer.parseInt(next());
-		}
-	}
-	
-	
-
 }
