@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 public class Main {
 	private static int sizeOfTriangle;
 	private static int[][] Triangle = new int[100][100];
+	private static int[][] cache = new int[100][100];
 
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
@@ -18,32 +19,28 @@ public class Main {
 			for (int i = 0; i < sizeOfTriangle; i++) {
 				for (int j = 0; j <= i; j++) {
 					Triangle[i][j] = input.nextInt();
+					cache[i][j] = -1;
 				}
 			}
 			
-			System.out.println(findMaxSum(0, 0, 0));
+			System.out.println(findMaxSum(0, 0));
 			testCase--;
 		}
 	}
 	
-	private static int findMaxSum(int y, int x, int tmpSum) {
-		//삼각형 밖으로 벗어난 경우
-		if (y >= sizeOfTriangle || x >= sizeOfTriangle) {
-			return 0;
-		}
-		
+	private static int findMaxSum(int y, int x) {
 		//삼각형 제일 하단으로 내려온 경우
-		if (y == sizeOfTriangle-1) {
-			return tmpSum + Triangle[y][x];
+		if (y == sizeOfTriangle - 1) {
+			return Triangle[y][x];
 		}
 		
-		if (tmpSum == 0) {
-			tmpSum = Triangle[0][0];
+		//초기값일 경우
+		if (cache[y][x] == -1) {
+			cache[y][x] = Triangle[y][x];
 		} else {
-			tmpSum += Triangle[y][x];
+			return cache[y][x];
 		}
-		
-		return Math.max(findMaxSum(y+1, x, tmpSum), findMaxSum(y+1, x+1, tmpSum));
+		return cache[y][x] = Math.max(findMaxSum(y+1, x), findMaxSum(y+1, x+1)) + Triangle[y][x];
 	}
 
 	static class InputReader {
@@ -70,5 +67,4 @@ public class Main {
 			return Integer.parseInt(next());
 		}
 	}
-
 }
