@@ -13,8 +13,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
-		
 		final int testCase = input.nextInt();
+		long start = System.currentTimeMillis();
 		for (int i = 1; i <= testCase; i++) {
 			n = input.nextInt();
 			// board 만들기
@@ -25,33 +25,31 @@ public class Main {
 				}
 			}
 			
-			if(jump(0, 0) == 1) {
+			if(jump(0, 0)) {
 				System.out.println("YES");
 			} else {
 				System.out.println("NO");
 			}
 		}
+		long elapsedTime = System.currentTimeMillis() - start;
+		System.out.println( "실행 시간 : " + elapsedTime +  " ms");
 	}
 
-	private static int jump(int x, int y) {
+	private static boolean jump(int y, int x) {
 		//board 밖으로 벗어난 경우
-		if (x >= n || y >= n) {
-			return 0;
+		if (y >= n || x >= n) {
+			return false;
 		}
 		
 		//board에 도착했을 경우
-		if (x == n-1 && y == n-1) {
-			return 1;
+		if (y == n-1 && x == n-1) {
+			return true;
 		}
-		
-		int cache1 = cache[x][y];
-		if (cache1 != -1) {
-			return cache1;
+		if (cache[y][x] == -1) {
+			int jumpSize = board[y][x];
+			cache[y][x] = (jump(y + jumpSize, x) || jump(y, x + jumpSize) ? 1 : 0);
 		}
-		
-		int jumpSize = board[x][y];
-		
-		return cache1 = (jump(x + jumpSize, y) + jump(x, y + jumpSize));
+		return cache[y][x] == 1;
 	}
 	
 	static class InputReader {
