@@ -9,19 +9,18 @@ import java.util.StringTokenizer;
 public class Main {
 	private static int n;
 	private static int board[][] = new int[100][100];
-	private static boolean cache[][] = new boolean[100][100];
+	private static int cache[][] = new int[100][100];
 
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
-		long start = System.currentTimeMillis();
-
 		final int testCase = input.nextInt();
+		long start = System.currentTimeMillis();
 		for (int i = 1; i <= testCase; i++) {
 			n = input.nextInt();
 			// board 만들기
 			for (int j = 0; j < n; j++) {
 				for (int k = 0; k < n; k++) {
-					cache[j][k] = false;
+					cache[j][k] = -1;
 					board[j][k] = input.nextInt();
 				}
 			}
@@ -46,11 +45,11 @@ public class Main {
 		if (y == n-1 && x == n-1) {
 			return true;
 		}
-		if (cache[y][x]) {
-			return cache[y][x];
+		if (cache[y][x] == -1) {
+			int jumpSize = board[y][x];
+			cache[y][x] = (jump(y + jumpSize, x) || jump(y, x + jumpSize) ? 1 : 0);
 		}
-		int jumpSize = board[y][x];
-		return cache[y][x] = (jump(y + jumpSize, x) || jump(y, x + jumpSize));
+		return cache[y][x] == 1;
 	}
 	
 	static class InputReader {
