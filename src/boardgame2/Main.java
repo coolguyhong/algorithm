@@ -42,15 +42,19 @@ public class Main {
         }
 
         if (cache[here] == -1) {
-            for (int i = 1; i <= K; i++) {
-                if (i == distance || M[i] == 0) {
-                    continue;
-                }
-                M[i]--;
-                cache[here] = minimumPrice(here + i, i, price);
-            }
+            cache[here] = price;
         }
 
+        for (int i = 1; i <= K; i++) {
+            if (i == distance || M[i] == 0) {
+                continue;
+            }
+            M[i]--;
+            int tmpPrice = minimumPrice(here + i, i, price);
+            if (cache[here] >= tmpPrice) {
+                cache[here] = tmpPrice;
+            }
+        }
         return cache[here];
     }
 
