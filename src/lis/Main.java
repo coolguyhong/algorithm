@@ -4,54 +4,45 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 	private static int[] SEQUENCE = new int[500];
-	private static int Lengh_Sequence;
-	private static int Max_Length;
-	private static List<Integer> lisList = new ArrayList<>();
+	private static int[] LIS = new int[500];
+	private static int length;
 
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
 		int testCase = input.nextInt();
 		while (testCase > 0) {
-			Lengh_Sequence = input.nextInt();
-			for (int i = 0; i < Lengh_Sequence; i++) {
+			length = input.nextInt();
+			for (int i = 0; i < length; i++) {
 				SEQUENCE[i] = input.nextInt();
 			}
-			System.out.println(findLIS(SEQUENCE[0], 0));
-			Max_Length = 0;
-			lisList.clear();
+			lis();
 			testCase--;
 		}
 	}
 
-	private static int findLIS(int value, int location) {
-		if (value == 0 || location == SEQUENCE.length) {
-			return Max_Length;
+	private static void lis() {
+		int max = 1;
+		LIS[0] = 1;
+
+		for (int i = 1; i < length; i++) {
+			LIS[i] = 1;
+
+			for (int j = 0; j < i; j++) {
+				if (SEQUENCE[i] > SEQUENCE[j] && LIS[j] + 1 > LIS[i]) {
+					LIS[i] = LIS[j] + 1;
+				}
+			}
+
+			if (max < LIS[i]) {
+				max = LIS[i];
+			}
 		}
 
-		if (location == 0) {
-			lisList.add(value);
-			Max_Length = lisList.size();
-			location = location + 1;
-			findLIS(SEQUENCE[location], location);
-		}
-
-		if (value > lisList.get(Max_Length - 1)) {
-			lisList.add(value);
-			Max_Length = lisList.size();
-			location = location + 1;
-			findLIS(SEQUENCE[location], location);
-		} else {
-			location = location + 1;
-			findLIS(SEQUENCE[location], location);
-		}
-
-		return Max_Length;
+		System.out.println(max);
 	}
 
 	static class InputReader {
