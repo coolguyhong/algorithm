@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -21,6 +23,13 @@ public class Main {
 					Triangle[i][j] = input.nextInt();
 					cache[i][j] = -1;
 				}
+			}
+
+			List<Integer> sd = new ArrayList<>();
+			sd.add(11);
+
+			for (int i = 0; i < sd.size(); i++) {
+				System.out.println(sd.get(i).intValue());
 			}
 			
 			System.out.println(findMaxSum(0, 0));
