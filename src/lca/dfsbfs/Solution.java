@@ -11,8 +11,8 @@ public class Solution {
     private static List<Integer>[] G;
 
     public static void main(String[] args) throws Exception {
-        InputReader input = new InputReader(System.in);
-//        InputReader input = new InputReader(new FileInputStream(Solution.class.getResource("sample_input.txt").getPath()));
+//        InputReader input = new InputReader(System.in);
+        InputReader input = new InputReader(new FileInputStream(Solution.class.getResource("sample_input.txt").getPath()));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int T = input.nextInt();
