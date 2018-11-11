@@ -1,4 +1,4 @@
-package termsum;
+package termsum.indextree;
 
 import java.io.BufferedReader;
 import java.io.IOException;

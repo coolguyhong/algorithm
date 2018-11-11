@@ -34,7 +34,7 @@ public class Main {
 		}
 		
 		int H = 0;
-		int mid = 0;
+		int mid;
 		int min = 0;
 		long length;
 		while (min < max) {
