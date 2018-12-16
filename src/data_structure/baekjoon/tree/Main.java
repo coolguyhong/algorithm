@@ -1,4 +1,4 @@
-package graph.baekjoon.tree;
+package data_structure.baekjoon.tree;
 
 import java.io.BufferedReader;
 import java.io.IOException;
