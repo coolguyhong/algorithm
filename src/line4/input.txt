@@ -1,8 +1,0 @@
-﻿add 5 4
-add 1 3
-add 6 1
-evict
-get 6
-add 7 8
-remove 7
-exit

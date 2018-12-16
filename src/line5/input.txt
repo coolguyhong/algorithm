@@ -1,7 +1,0 @@
-﻿add 5
-add 2
-add 7
-min
-add 8
-remove 7
-exit
