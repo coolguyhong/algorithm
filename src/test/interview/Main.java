@@ -14,7 +14,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-//        System.out.println(fibonacci(5));
+//        System.out.println(termsum.baekjoon.fibonacci(5));
 //        int n = 20;
 //        for (int i = 0; i < n; n--) {
 //            System.out.print("* ");
@@ -22,10 +22,10 @@ public class Main {
         new Main(null);
     }
 
-//    private static int fibonacci(int n) {
+//    private static int termsum.baekjoon.fibonacci(int n) {
 //        if (n <= 1) {
 //            return n;
 //        }
-//        return fibonacci(n-1) + fibonacci(n-2);
+//        return termsum.baekjoon.fibonacci(n-1) + termsum.baekjoon.fibonacci(n-2);
 //    }
 }
