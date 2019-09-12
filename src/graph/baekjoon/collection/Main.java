@@ -11,7 +11,7 @@ public class Main {
 	private static int[] D = new int[1000001];
 
 	// union find
-	// ¹éÁØ: ÁýÇÕÀÇ Ç¥Çö(1717)
+	// ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½(1717)
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
 		
