@@ -10,11 +10,12 @@ public class Main {
     private static StringTokenizer st;
 
     private static int N, M, K;
-    private static int[] depth;
     private static int[][] parents;
-    private static List<Integer>[] G;
+    private static int[] depth;
+    private static List<Integer>[] links;
 
     // 백준 알고리즘
+    // https://www.acmicpc.net/problem/11438
     // LCA 2(11438 번) : graph.samsung.lca 구하기
     public static void main(String[] args) throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,44 +23,47 @@ public class Main {
 
         st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-        depth = new int[N+1];
-        G = new ArrayList[N+1];
-        for (int i = 1; i <= N; i++) {
-            G[i] = new ArrayList<>();
-        }
 
-        int n = N;
         K = 0;
+        int n = N;
         while (n > 0) {
             K++;
             n /= 2;
         }
 
-        parents = new int[K][N+1];
+        links = new ArrayList[N+1];
+        depth = new int[N+1];
+        for (int i = 1; i <= N; i++) {
+            links[i] = new ArrayList<>();
+        }
+
         int a, b;
         for (int i = 0; i < N-1; i++) {
             st = new StringTokenizer(br.readLine());
             a = Integer.parseInt(st.nextToken());
             b = Integer.parseInt(st.nextToken());
 
-            G[a].add(b);
-            G[b].add(a);
+            links[a].add(b);
+            links[b].add(a);
         }
 
-        bfs();
+        parents = new int[K][N+1];
+        makeGraph();
         fillParents();
 
         st = new StringTokenizer(br.readLine());
         M = Integer.parseInt(st.nextToken());
-        while (M-- > 0) {
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             a = Integer.parseInt(st.nextToken());
             b = Integer.parseInt(st.nextToken());
 
             bw.write(lca(a, b) + "\n");
         }
+
         bw.flush();
         bw.close();
+
     }
 
     private static int lca(int a, int b) {
@@ -75,6 +79,7 @@ public class Main {
             if (diff % 2 == 1) {
                 a = parents[k][a];
             }
+
             k++;
             diff /= 2;
         }
@@ -87,9 +92,11 @@ public class Main {
             if (parents[k][a] == parents[k][b]) {
                 continue;
             }
+
             a = parents[k][a];
             b = parents[k][b];
         }
+
         return parents[0][a];
     }
 
@@ -101,7 +108,7 @@ public class Main {
         }
     }
 
-    private static void bfs() {
+    private static void makeGraph() {
         Queue<Integer> q = new LinkedList<>();
         q.add(1);
         depth[1] = 1;
@@ -109,13 +116,13 @@ public class Main {
         int n;
         while (!q.isEmpty()) {
             n = q.poll();
-            for (int c : G[n]) {
-                if (c == parents[0][n]) {
+            for (int c : links[n]) {
+                if (parents[0][n] == c) {
                     continue;
                 }
 
-                depth[c] = depth[n] + 1;
                 parents[0][c] = n;
+                depth[c] = depth[n] + 1;
                 q.add(c);
             }
         }

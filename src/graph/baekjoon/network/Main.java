@@ -14,8 +14,8 @@ public class Main {
 	private static int[][] G;
 	private static int[] D;
 
-	// ÃÖ¼Ò½ÅÀåÆ®¸®, Kruskal ¾Ë°í¸®Áò
-	// ¹éÁØ: ³×Æ®¿öÅ© ¿¬°á(1922)
+	// ï¿½Ö¼Ò½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½, Kruskal ï¿½Ë°ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½(1922)
 	public static void main(String[] args) {
 		InputReader input = new InputReader(System.in);
 		

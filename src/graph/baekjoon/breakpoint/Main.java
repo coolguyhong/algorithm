@@ -14,13 +14,16 @@ public class Main {
 	private static BufferedReader br;
 	private static BufferedWriter bw;
 	private static StringTokenizer st;
-	
+
 	private static int V, E;
-	private static List<Integer>[] links;
-	private static boolean[] isCutV;
 	private static int order;
 	private static int[] visitedOrder;
-	
+	private static boolean[] isCutV;
+	private static List<Integer>[] links;
+
+	// 백준 알고리즘
+	// https://www.acmicpc.net/problem/11266
+	// 단절점(11266): dfs 활용
 	public static void main(String[] args) throws IOException {
 		br = new BufferedReader(new InputStreamReader(System.in));
 		bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -28,83 +31,84 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 		V = Integer.parseInt(st.nextToken());
 		E = Integer.parseInt(st.nextToken());
-		
-		links = new ArrayList[V+1];
+
 		visitedOrder = new int[V+1];
 		isCutV = new boolean[V+1];
+		links = new ArrayList[V+1];
+
 		for (int i = 1; i <= V; i++) {
 			links[i] = new ArrayList<>();
 		}
-		
+
 		int a, b;
 		for (int i = 0; i < E; i++) {
 			st = new StringTokenizer(br.readLine());
 			a = Integer.parseInt(st.nextToken());
 			b = Integer.parseInt(st.nextToken());
-			
+
 			links[a].add(b);
 			links[b].add(a);
 		}
-		
+
 		order = 0;
 		for (int i = 1; i <= V; i++) {
 			if (visitedOrder[i] != 0) {
 				continue;
 			}
-			
 			dfs(i, -1);
 		}
-		
+
 		int cnt = 0;
-		String ans = "";
+		StringBuffer sb = new StringBuffer();
 		for (int i = 1; i <= V; i++) {
 			if (isCutV[i]) {
 				cnt++;
-				ans += i + " ";
+				sb.append(i + " ");
 			}
 		}
-		
+
 		bw.write(cnt + "\n");
-		bw.write(ans + "\n");
+		bw.write(sb + "\n");
 		bw.flush();
 		bw.close();
 	}
 
-	// 해당 노드의 최저 방문 순서를 return 해주는 dfs
-	private static int dfs(int node, int parent) {
-		if (visitedOrder[node] != 0) {
-			return visitedOrder[node]; 
+	private static int dfs(int n, int p) {
+		if (visitedOrder[n] != 0) {
+			return visitedOrder[n];
 		}
-		
+
 		order++;
-		visitedOrder[node] = order;
-		int minLow = visitedOrder[node];
-		
+		visitedOrder[n] = order;
+		int minLow = visitedOrder[n];
+
 		int child = 0;
-		for (int c : links[node]) {
-			if (c == parent) {
+		for (int c : links[n]) {
+			if (c == p) {
 				continue;
 			}
-			
+
 			if (visitedOrder[c] != 0) {
-				minLow = Math.min(visitedOrder[c], minLow);
+				minLow = min(minLow, visitedOrder[c]);
 			} else {
 				child++;
-				int low = dfs(c, node);
-				
-				if (parent != -1 && low >= visitedOrder[node]) {
-					isCutV[node] = true;
+				int low = dfs(c, n);
+
+				if (p != -1 && visitedOrder[n] <= low) {
+					isCutV[n] = true;
 				}
-				
-				minLow = Math.min(low, minLow);
+				minLow = min(minLow, low);
 			}
 		}
-		
-		if (parent == -1 && child > 1) {
-			isCutV[node] = true;
+
+		if (p == -1 && child > 1) {
+			isCutV[n] = true;
 		}
-		
+
 		return minLow;
 	}
 
+	private static int min(int a, int b) {
+		return (a < b) ? a : b;
+	}
 }
