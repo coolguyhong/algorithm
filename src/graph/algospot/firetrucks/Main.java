@@ -13,11 +13,9 @@ public class Main {
     private static StringTokenizer st;
 
     private static int V, E, N, M;
-    private static int[] dist;
+    private static int[] D, n, m;
     private static final int max_value = 500000001;
-    private static List<int[]>[] links;
-    private static int[] n;
-    private static int[] m;
+    private static Node[] nodes;
 
     // 알고스팟 문제 해결 전략
     // https://algospot.com/judge/problem/read/FIRETRUCKS
@@ -34,40 +32,41 @@ public class Main {
             N = Integer.parseInt(st.nextToken());
             M = Integer.parseInt(st.nextToken());
 
-            dist = new int[V+1];
-            n = new int[N+1];
-            m = new int[M+1];
-            links = new ArrayList[V+1];
+            D = new int[V+1];
+            nodes = new Node[V+1];
             for (int i = 1; i <= V; i++) {
-                dist[i] = max_value;
-                links[i] = new ArrayList<>();
+                D[i] = max_value;
+                nodes[i] = new Node(i);
             }
 
-            int a, b, t;
+            int a, b, c;
             for (int i = 0; i < E; i++) {
                 st = new StringTokenizer(br.readLine());
                 a = Integer.parseInt(st.nextToken());
                 b = Integer.parseInt(st.nextToken());
-                t = Integer.parseInt(st.nextToken());
+                c = Integer.parseInt(st.nextToken());
 
-                links[a].add(new int[]{b, t});
-                links[b].add(new int[]{a, t});
+                nodes[a].addLink(new Link(nodes[b], c));
+                nodes[b].addLink(new Link(nodes[a], c));
             }
 
+            n = new int[N+1];
             st = new StringTokenizer(br.readLine());
             for (int i = 1; i <= N; i++) {
                 n[i] = Integer.parseInt(st.nextToken());
             }
 
+            m = new int[M+1];
             st = new StringTokenizer(br.readLine());
             for (int i = 1; i <= M; i++) {
                 m[i] = Integer.parseInt(st.nextToken());
             }
 
             dijkstra();
+
             int ans = 0;
             for (int i = 1; i <= N; i++) {
-                ans += dist[n[i]];
+                ans += D[n[i]];
             }
 
             bw.write(ans + "\n");
@@ -78,23 +77,46 @@ public class Main {
     private static void dijkstra() {
         Queue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
         for (int i = 1; i <= M; i++) {
-            dist[m[i]] = 0;
+            D[m[i]] = 0;
             pq.add(new int[]{m[i], 0});
         }
 
         int[] n;
         while (!pq.isEmpty()) {
             n = pq.poll();
-            if (dist[n[0]] < n[1]) {
+            if (D[n[0]] < n[1]) {
                 continue;
             }
 
-            for (int[] k : links[n[0]]) {
-                if (dist[n[0]] + k[1] < dist[k[0]]) {
-                    dist[k[0]] = dist[n[0]] + k[1];
-                    pq.add(new int[]{k[0], dist[k[0]]});
+            for (Link link : nodes[n[0]].links) {
+                if (D[link.target.no] > link.weight + D[n[0]]) {
+                    D[link.target.no] = link.weight + D[n[0]];
+                    pq.add(new int[]{link.target.no, D[link.target.no]});
                 }
             }
         }
+    }
+}
+
+class Node {
+    int no;
+    List<Link> links = new ArrayList<>();
+
+    Node(int no) {
+        this.no = no;
+    }
+
+    void addLink(Link link) {
+        links.add(link);
+    }
+}
+
+class Link {
+    Node target;
+    int weight;
+
+    Link(Node target, int weight) {
+        this.target = target;
+        this.weight = weight;
     }
 }
