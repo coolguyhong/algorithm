@@ -6,8 +6,8 @@ import java.util.StringTokenizer;
 public class Main {
 
     private static int V, M, N;
-    private static int[][] D;
-    private static final int max_value = Integer.MAX_VALUE;
+    private static long[][] D;
+    private static final long max_value = 10000000001L;
     private static int ans;
 
     // 알고스팟 문제 해결 능력
@@ -25,7 +25,7 @@ public class Main {
             M = Integer.parseInt(st.nextToken());
             N = Integer.parseInt(st.nextToken());
 
-            D = new int[V][V];
+            D = new long[V][V];
             for (int i = 0; i < V; i++) {
                 for (int j = 0; j < V; j++) {
                     if (i == j) {
@@ -36,12 +36,13 @@ public class Main {
                 }
             }
 
-            int a, b, c;
+            int a, b;
+            long c;
             for (int i = 0; i < M; i++) {
                 st = new StringTokenizer(br.readLine());
                 a = Integer.parseInt(st.nextToken());
                 b = Integer.parseInt(st.nextToken());
-                c = Integer.parseInt(st.nextToken());
+                c = Long.parseLong(st.nextToken());
 
                 D[a][b] = c;
                 D[b][a] = c;
@@ -54,18 +55,17 @@ public class Main {
                 st = new StringTokenizer(br.readLine());
                 a = Integer.parseInt(st.nextToken());
                 b = Integer.parseInt(st.nextToken());
-                c = Integer.parseInt(st.nextToken());
+                c = Long.parseLong(st.nextToken());
 
                 update(a, b, c);
             }
 
             bw.write(ans + "\n");
         }
-        bw.flush();
         bw.close();
     }
 
-    private static void update(int a, int b, int c) {
+    private static void update(int a, int b, long c) {
         if (D[a][b] <= c) {
             ans++;
             return;
@@ -91,7 +91,7 @@ public class Main {
         }
     }
 
-    private static int min(int a, int b) {
+    private static long min(long a, long b) {
         return (a < b) ? a : b;
     }
 }
