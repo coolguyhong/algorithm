@@ -14,9 +14,8 @@ public class Main {
 
     private static int V, E;
     private static int[] A;
-    private static int[][] D;
-    private static int[][] W;
-    private static final int max_value = 1000000000;
+    private static int[][] D, W;
+    private static final int max_value = 12500001;
 
     // 알고스팟 문제 해결 전략
     // https://algospot.com/judge/problem/read/DRUNKEN
@@ -29,79 +28,67 @@ public class Main {
         V = Integer.parseInt(st.nextToken());
         E = Integer.parseInt(st.nextToken());
 
-        A = new int[V];
-        W = new int[V][V];
-        D = new int[V][V];
+        A = new int[V+1];
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < V; i++) {
+        for (int i = 1; i <= V; i++) {
             A[i] = Integer.parseInt(st.nextToken());
-            for (int j = 0; j < V; j++) {
+        }
+
+        D = new int[V+1][V+1];
+        W = new int[V+1][V+1];
+        for (int i = 1; i <= V; i++) {
+            for (int j = 1; j <= V; j++) {
                 if (i == j) {
                     continue;
                 }
-
                 D[i][j] = max_value;
+                W[i][j] = max_value;
             }
         }
 
         int a, b, c;
         for (int i = 0; i < E; i++) {
             st = new StringTokenizer(br.readLine());
-            a = Integer.parseInt(st.nextToken()) - 1;
-            b = Integer.parseInt(st.nextToken()) - 1;
+            a = Integer.parseInt(st.nextToken());
+            b = Integer.parseInt(st.nextToken());
             c = Integer.parseInt(st.nextToken());
 
             D[a][b] = c;
             D[b][a] = c;
+            W[a][b] = c;
+            W[b][a] = c;
         }
 
-        floyd();
+        List<int[]> order = new ArrayList<>();
+        order.add(new int[]{0, 0});
+        for (int i = 1; i <= V; i++) {
+            order.add(new int[]{i, A[i]});
+        }
+        Collections.sort(order, (a1, b1) -> Integer.compare(a1[1], b1[1]));
 
-        st = new StringTokenizer(br.readLine());
-        int T = Integer.parseInt(st.nextToken());
-        int s, e;
-        for (int i = 0; i < T; i++) {
+        // floyd 수행
+        for (int k = 1; k <= V; k++) {
+            int w = order.get(k)[0];
+            for (int i = 1; i <= V; i++) {
+                if (W[i][w] == max_value || W[i][w] == 0) {
+                    continue;
+                }
+                for (int j = 1; j <= V; j++) {
+                    D[i][j] = Math.min(D[i][j], D[i][w] + D[w][j]);
+                    W[i][j] = Math.min(W[i][j], D[i][j] + A[w]);
+                }
+            }
+        }
+
+        int T = Integer.parseInt(br.readLine());
+        while (T-- > 0) {
             st = new StringTokenizer(br.readLine());
-            s = Integer.parseInt(st.nextToken()) - 1;
-            e = Integer.parseInt(st.nextToken()) - 1;
+            a = Integer.parseInt(st.nextToken());
+            b = Integer.parseInt(st.nextToken());
 
-            bw.write(W[s][e] + "\n");
+            bw.write(W[a][b] + "\n");
         }
-
-        bw.flush();
         bw.close();
     }
 
-    private static void floyd() {
-        List<int[]> order = new ArrayList<>();
-        for (int i = 0; i < V; i++) {
-            order.add(new int[]{i, A[i]});
-        }
-        Collections.sort(order, (int[] a, int[] b) -> Integer.compare(a[1], b[1]));
-
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (i == j) {
-                    W[i][j] = 0;
-                } else {
-                    W[i][j] = D[i][j];
-                }
-            }
-        }
-
-        for (int k = 0; k < V; k++) {
-            int[] o = order.get(k);
-            int w = o[0];
-            for (int i = 0; i < V; i++) {
-                for (int j = 0; j < V; j++) {
-                    D[i][j] = min(D[i][j], D[i][w] + D[w][j]);
-                    W[i][j] = min(W[i][j], D[i][j] + A[w]);
-                }
-            }
-        }
-    }
-
-    private static int min(int a, int b) {
-        return (a < b) ? a : b;
-    }
 }
