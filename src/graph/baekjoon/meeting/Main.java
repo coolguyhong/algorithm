@@ -26,11 +26,13 @@ public class Main {
 
         N = Integer.parseInt(br.readLine());
         D = new int[N+1][N+1];
+
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= N; j++) {
                 if (i == j) {
                     continue;
                 }
+
                 D[i][j] = INF;
             }
         }
@@ -48,10 +50,19 @@ public class Main {
 
         floyd();
 
+        // 각 노드에서 다른 노드로 연결된 노드로의 최대 값
         max = new int[N+1];
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= N; j++) {
-                if (D[i][j] < INF && D[i][j] > max[i]) {
+                if (i == j) {
+                    continue;
+                }
+
+                if (D[i][j] == INF) {
+                    continue;
+                }
+
+                if (D[i][j] > max[i]) {
                     max[i] = D[i][j];
                 }
             }
@@ -65,19 +76,20 @@ public class Main {
             }
             int t = i;
             for (int j = 1; j <= N; j++) {
-                if (D[i][j] < INF) {
-                    visited[j]++;
-                    if (max[t] > max[j]) {
-                        t = j;
-                    }
+                if (D[i][j] == INF) {
+                    continue;
+                }
+                visited[j]++;
+                if (max[t] > max[j]) {
+                    t = j;
                 }
             }
 
             ans.add(t);
         }
 
-        Collections.sort(ans);
         bw.write(ans.size() + "\n");
+        Collections.sort(ans);
         for (int i = 0; i < ans.size(); i++) {
             bw.write(ans.get(i) + "\n");
         }
@@ -87,7 +99,7 @@ public class Main {
     private static void floyd() {
         for (int k = 1; k <= N; k++) {
             for (int s = 1; s <= N; s++) {
-                for (int e = 0; e <= N; e++) {
+                for (int e = 1; e <= N; e++) {
                     if (D[s][e] > D[s][k] + D[k][e]) {
                         D[s][e] = D[s][k] + D[k][e];
                     }
