@@ -69,13 +69,13 @@ public class Main {
         // floyd 수행
         for (int k = 1; k <= V; k++) {
             int w = order.get(k)[0];
-            for (int i = 1; i <= V; i++) {
-                if (W[i][w] == max_value || W[i][w] == 0) {
+            for (int s = 1; s <= V; s++) {
+                if (D[w][s] == max_value || D[w][s] == 0) {
                     continue;
                 }
-                for (int j = 1; j <= V; j++) {
-                    D[i][j] = Math.min(D[i][j], D[i][w] + D[w][j]);
-                    W[i][j] = Math.min(W[i][j], D[i][j] + A[w]);
+                for (int e = 1; e <= V; e++) {
+                    D[s][e] = Math.min(D[s][e], D[s][w] + D[w][e]);
+                    W[s][e] = Math.min(W[s][e], D[s][e] + A[w]);
                 }
             }
         }

@@ -1,4 +1,4 @@
-package graph.algospot.timetrip;
+package graph.algospot.timetrip.node_list;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,8 +14,7 @@ public class Main {
 
     private static int V, W;
     private static int[] min_d, max_d;
-    private static final int max_value = Integer.MAX_VALUE;
-//    private static int[][] min_path, max_path;
+    private static final int INF = 1000001;
     private static List<int[]>[] min_links, max_links;
 
     // 알고스팟 문제 해결 능력
@@ -32,9 +31,9 @@ public class Main {
             W = Integer.parseInt(st.nextToken());
 
             min_d = new int[V];
-            Arrays.fill(min_d, max_value);
+            Arrays.fill(min_d, INF);
             max_d = new int[V];
-            Arrays.fill(max_d, max_value);
+            Arrays.fill(max_d, INF);
 
             min_links = new ArrayList[V];
             max_links = new ArrayList[V];
@@ -61,10 +60,8 @@ public class Main {
                 updated = false;
                 for (int here = 0; here < V; here++) {
                     for (int j = 0; j < min_links[here].size(); j++) {
-                        int there = min_links[here].get(j)[0];
-                        int cost = min_links[here].get(j)[1];
-                        if (min_d[there] > min_d[here] + cost) {
-                            min_d[there] = min_d[here] + cost;
+                        if (min_d[min_links[here].get(j)[0]] > min_d[here] + min_links[here].get(j)[1]) {
+                            min_d[min_links[here].get(j)[0]] = min_d[here] + min_links[here].get(j)[1];
                             updated = true;
                         }
                     }
@@ -75,7 +72,7 @@ public class Main {
                 }
             }
 
-            if (min_d[1] == max_value) {
+            if (min_d[1] == INF) {
                 bw.write("UNREACHABLE\n");
                 continue;
             }
@@ -91,10 +88,8 @@ public class Main {
                 updated = false;
                 for (int here = 0; here < V; here++) {
                     for (int j = 0; j < max_links[here].size(); j++) {
-                        int there = max_links[here].get(j)[0];
-                        int cost = max_links[here].get(j)[1];
-                        if (max_d[there] > max_d[here] + cost) {
-                            max_d[there] = max_d[here] + cost;
+                        if (max_d[max_links[here].get(j)[0]] > max_d[here] + max_links[here].get(j)[1]) {
+                            max_d[max_links[here].get(j)[0]] = max_d[here] + max_links[here].get(j)[1];
                             updated = true;
                         }
                     }
@@ -105,11 +100,18 @@ public class Main {
                 }
             }
 
-            if (updated) {
-                bw.write("INFINITY\n");
-            } else {
-                bw.write(max_d[1] + "\n");
+            if (max_d[1] == INF) {
+                bw.write("UNREACHABLE\n");
+                continue;
             }
+
+            if (updated) {
+                bw.write("INFINITY");
+            } else {
+                bw.write((max_d[1] * -1));
+            }
+            bw.newLine();
+
         }
         bw.close();
     }

@@ -44,8 +44,10 @@ public class Main {
                 b = Integer.parseInt(st.nextToken());
                 c = Long.parseLong(st.nextToken());
 
-                D[a][b] = c;
-                D[b][a] = c;
+                if (D[a][b] > c) {
+                    D[a][b] = c;
+                    D[b][a] = c;
+                }
             }
 
             floyd();
@@ -73,8 +75,8 @@ public class Main {
 
         for (int s = 0; s < V; s++) {
             for (int e = 0; e < V; e++) {
-                D[s][e] = min(D[s][e],
-                        min(D[s][a] + c + D[b][e], D[s][b] + c + D[a][e]));
+                D[s][e] = Math.min(D[s][e],
+                        Math.min(D[s][a] + c + D[b][e], D[s][b] + c + D[a][e]));
             }
         }
     }
@@ -91,7 +93,4 @@ public class Main {
         }
     }
 
-    private static long min(long a, long b) {
-        return (a < b) ? a : b;
-    }
 }

@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
@@ -14,10 +13,10 @@ public class Main {
     private static StringTokenizer st;
 
     private static int N, M, Q;
-    private static int [][] D, monkey, ans;
+    private static int [][] D, monkey, ans, via;
     private static int[] time;
     private static final int INF = 100000001;
-
+    private static Deque<Integer> path;
     // 백준 알고리즘
     // https://www.acmicpc.net/problem/1602
     // 도망자 원숭이, 플로이드
@@ -32,6 +31,7 @@ public class Main {
 
         D = new int[N+1][N+1];
         ans = new int[N+1][N+1];
+        via = new int[N+1][N+1];
         monkey = new int[N+1][2];
         time = new int[N+1];
         st = new StringTokenizer(br.readLine());
@@ -67,6 +67,8 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             s = Integer.parseInt(st.nextToken());
             t = Integer.parseInt(st.nextToken());
+            path = new ArrayDeque<>();
+            reconstruct(s, t);
 
             if (ans[s][t] >= INF) {
                 bw.write("-1\n");
@@ -74,7 +76,25 @@ public class Main {
                 bw.write(ans[s][t] + "\n");
             }
         }
+
+
+
+
         bw.close();
+    }
+
+    private static void reconstruct(int s, int t) {
+        if (via[s][t] == 0) {
+            path.add(s);
+            if (s != t) {
+                path.add(t);
+            }
+        } else {
+            int w = via[s][t];
+            reconstruct(s, w);
+            path.pollLast();
+            reconstruct(w, t);
+        }
     }
 
     private static void floyd() {
@@ -83,6 +103,9 @@ public class Main {
             int w = monkey[k][1];
             for (int s = 1; s <= N; s++) {
                 for (int e = 1; e <= N; e++) {
+                    if (D[s][p] + D[p][e] < D[s][e]) {
+                        via[s][e] = p;
+                    }
                     D[s][e] = Math.min(D[s][p] + D[p][e], D[s][e]);
                     ans[s][e] = Math.min(ans[s][e], D[s][e] + Math.max(Math.max(time[s], time[e]), w));
                 }
