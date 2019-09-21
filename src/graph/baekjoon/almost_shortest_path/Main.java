@@ -21,6 +21,8 @@ public class Main {
     // 백준 알고리즘
     // https://www.acmicpc.net/problem/5719
     // 거의 최단거리, 다익스트라
+    // 컨셉: 최단거리 경로 찾음(중복 될 수 있으니 >=) 그다음 최단 경로 link 삭제해줌
+    // 그다음 다익스트라 다시 돌림
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));

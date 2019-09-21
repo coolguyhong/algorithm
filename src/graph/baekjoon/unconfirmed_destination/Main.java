@@ -20,6 +20,10 @@ public class Main {
     // 백준 알고리즘
     // https://www.acmicpc.net/problem/9370
     // 미확인 도착지,
+    // 해당 경로를 지나갔다고 하면 모든 경로 짝수로 두고
+    // 해당 경로만 홀수로 둠
+    // 만약 최단 거리 목적지 후보지가 홀수면 해당 경로 지난것
+    // 아니면 안지난것
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));

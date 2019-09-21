@@ -19,6 +19,9 @@ public class Main {
     // 백준 알고리즘(1504)
     // https://www.acmicpc.net/problem/1504
     // 특정한 최단 경로(다익스트라)
+    // 특정 경로 지나야 한다면 시작점 ~ a, a ~ b, b ~ 목표점
+    // 시작점 ~ b, b ~ a, b ~ 목표점 중의 최소 값
+    // 다익스트라 3번으로 해결 가능
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));
