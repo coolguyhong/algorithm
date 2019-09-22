@@ -110,7 +110,7 @@ public class Solution {
 
             for (long[] c : links[(int) n[0]]) {
                 indegrees[(int) c[0]]--;
-                if (D[(int) c[0]] < D[(int) n[0]] + c[1]) {
+                if (D[(int) c[0]] <= D[(int) n[0]] + c[1]) {
                     D[(int) c[0]] = D[(int) n[0]] + c[1];
                     path[(int) c[0]].add((int) n[0]);
                 }
