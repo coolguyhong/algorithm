@@ -1,112 +1,114 @@
 package graph.algospot.lan;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int N, M;
-    private static int[][] node;
-    private static int[] D;
-    private static double[][] edge; // 한점을 기준으로 다른 점까지의 거리를 저장한 것
+    static int N, M;
+    static int[] X = new int[500];
+    static int[] Y = new int[500];
 
-    // 알고스팟 문제 해결 능력
-    // https://algospot.com/judge/problem/read/LAN
-    // 근거리 네트워크(LAN): 그래프, union - find, 크루스칼 알고리즘(시간초과)
+    static boolean[] added = new boolean[500];
+    static double[] minWeight = new double[500];
+    static int[] parent = new int[500];
+
+    static double[][] adj = new double[500][500];
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int C = Integer.parseInt(st.nextToken());
-        while (C-- > 0) {
-            st = new StringTokenizer(br.readLine());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int cases = Integer.parseInt(br.readLine());
+
+        while (cases-- > 0) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
             N = Integer.parseInt(st.nextToken());
             M = Integer.parseInt(st.nextToken());
 
-            D = new int[N];
-            for (int i = 0; i < N; i++) {
-                D[i] = i;
-            }
-
-            node = new int[N][2];
             st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < N; i++) {
-                node[i][0] = Integer.parseInt(st.nextToken());
-            }
+            for(int i=0; i<N; i++)
+                X[i] = Integer.parseInt(st.nextToken());
 
             st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < N; i++) {
-                node[i][1] = Integer.parseInt(st.nextToken());
+            for(int i=0; i<N; i++)
+                Y[i] = Integer.parseInt(st.nextToken());
+
+            for(int i=0; i<N; i++) {
+                Arrays.fill(adj[i], 0.0);
             }
 
-            int a, b;
-            int cnt = 0;
-            for (int i = 0; i < M; i++) {
+            Arrays.fill(added, false);
+            Arrays.fill(minWeight, 987654321.0);
+            Arrays.fill(parent, -1);
+
+            int start = 0, end = 0;
+
+            for(start=0; start<N; start++) {
+                for(end=start+1; end<N; end++) {
+                    double dist = getMinDistance(start, end);
+                    adj[start][end] = dist;
+                    adj[end][start] = dist;
+                }
+            }
+
+            for(int i=0; i<M; i++) {
                 st = new StringTokenizer(br.readLine());
-                a = Integer.parseInt(st.nextToken());
-                b = Integer.parseInt(st.nextToken());
+                start = Integer.parseInt(st.nextToken());
+                end = Integer.parseInt(st.nextToken());
 
-                union(a, b);
-                cnt++;
+                adj[start][end] = 0.0;
+                adj[end][start] = 0.0;
             }
 
-            List<double[]> links = new ArrayList<>();
-            for (int i = 0; i < N * N; i++) {
-                a = i / N; // 이 점을 기준으로
-                b = i % N; // 다른 점들
-                if (a == b) {
-                    continue;
-                }
-                
-                if (find(a) == find(b)) {
-                    continue;
-                }
-                
-                double d = Math.sqrt( // 거리...
-                        Math.abs(node[a][0] - node[b][0])
-                        * Math.abs(node[a][0] - node[b][0])
-                        + Math.abs(node[a][1] - node[b][1])
-                        * Math.abs(node[a][1] - node[b][1]));
-                links.add(new double[]{a, b, d});
-            }
-
-            Collections.sort(links, (double[] a1, double[] b1) -> Double.compare(a1[2], b1[2]));
-
-            double sum = 0;
-
-            for (int i = 0; i < links.size(); i++) {
-                double[] link = links.get(i);
-                if (find((int) link[0]) != find((int) link[1])) {
-                    union((int) link[0], (int) link[1]);
-                    sum += link[2];
-                    cnt++;
-                }
-
-//                if (cnt == N-1) {
-//                    break;
-//                }
-            }
-
-            bw.write(sum + "\n");
+            System.out.printf("%.8f\n", prim());
         }
-        bw.flush();
-        bw.close();
+
+        br.close();
     }
 
-    private static void union(int a, int b) {
-        int pa = find(a);
-        int pb = find(b);
-        if (pa != pb) {
-            D[pb] = pa;
+    private static double prim() {
+
+        double ret = 0.0;
+
+        minWeight[0] = 0.0;
+        parent[0] = 0;
+
+        for(int i=0; i<N; i++) {
+
+            int u = -1;
+
+            for(int v=0; v<N; v++) {
+                if(!added[v] && (u == -1 || minWeight[u] > minWeight[v]))
+                    u = v;
+            }
+
+            ret += minWeight[u];
+            added[u] = true;
+
+            for(int v = 0; v < N; v++) {
+                if(!added[v] && minWeight[v] > adj[u][v]) {
+                    parent[v] = u;
+                    minWeight[v] = adj[u][v];
+                }
+            }
         }
+
+        return ret;
     }
 
-    private static int find(int a) {
-        if (D[a] == a) {
-            return a;
-        } else {
-            return D[a] = find(D[a]);
-        }
+
+    private static double getMinDistance(int cur, int i) {
+        double y2 = Y[cur]- Y[i];
+        double x2 = X[cur]- X[i];
+        return Math.sqrt(y2*y2 + x2*x2);
     }
 }

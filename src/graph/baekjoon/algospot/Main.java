@@ -19,7 +19,7 @@ public class Main {
 
     // 백준 알고리즘(1261)
     // https://www.acmicpc.net/problem/1261
-    // 그래프 bfs
+    // 그래프 bfs, dequeue를 이용해서 벽을 뚫을 필요 없는 것들 먼저 방문, 그다음 벽 뚫는 거 방문
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));
