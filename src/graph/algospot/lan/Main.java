@@ -1,12 +1,10 @@
 package graph.algospot.lan;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -16,7 +14,7 @@ public class Main {
     private static StringTokenizer st;
 
     private static int N, M;
-    private static int[] parents, X, Y;
+    private static int[] X, Y;
     private static double[][] adj;
     private static boolean[] added;
     private static double[] minWeight;
@@ -36,12 +34,13 @@ public class Main {
             M = Integer.parseInt(st.nextToken());
 
             X = new int[N];
+            Y = new int[N];
+
             st = new StringTokenizer(br.readLine());
             for (int i = 0; i < N; i++) {
                 X[i] = Integer.parseInt(st.nextToken());
             }
 
-            Y = new int[N];
             st = new StringTokenizer(br.readLine());
             for (int i = 0; i < N; i++) {
                 Y[i] = Integer.parseInt(st.nextToken());
@@ -56,22 +55,19 @@ public class Main {
                 }
             }
 
-            int a, b;
+            int x, y;
             for (int i = 0; i < M; i++) {
                 st = new StringTokenizer(br.readLine());
-                a = Integer.parseInt(st.nextToken());
-                b = Integer.parseInt(st.nextToken());
+                x = Integer.parseInt(st.nextToken());
+                y = Integer.parseInt(st.nextToken());
 
-                adj[a][b] = 0.0;
-                adj[b][a] = 0.0;
+                adj[x][y] = 0.0;
+                adj[y][x] = 0.0;
             }
 
             added = new boolean[N];
             minWeight = new double[N];
-            parents = new int[N];
-
             Arrays.fill(minWeight, max);
-            Arrays.fill(parents, -1);
 
             bw.write(prim() + "\n");
         }
@@ -81,7 +77,6 @@ public class Main {
     private static double prim() {
         double ans = 0.0;
 
-        parents[0] = 0;
         minWeight[0] = 0;
 
         for (int i = 0; i < N; i++) {
@@ -92,12 +87,11 @@ public class Main {
                 }
             }
 
-            ans += minWeight[u];
             added[u] = true;
+            ans += minWeight[u];
 
             for (int v = 0; v < N; v++) {
                 if (!added[v] && minWeight[v] > adj[u][v]) {
-                    parents[v] = u;
                     minWeight[v] = adj[u][v];
                 }
             }
@@ -109,7 +103,6 @@ public class Main {
     private static double getDistance(int i, int j) {
         double dx = X[i] - X[j];
         double dy = Y[i] - Y[j];
-
         return Math.sqrt(dx * dx + dy * dy);
     }
 }
