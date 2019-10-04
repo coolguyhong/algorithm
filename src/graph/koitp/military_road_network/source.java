@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.StringTokenizer;
 
 public class source {
@@ -30,48 +29,56 @@ public class source {
 
         st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
         D = new int[N+1];
         for (int i = 1; i <= N; i++) {
             D[i] = i;
         }
 
-        long ans = 0;
-        int c;
+        M = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+
         links = new Link[M+K];
+        added = new boolean[M+K];
+        can = new boolean[M+K];
+        int s, e, c;
+        long ans = 0;
         for (int i = 0; i < M+K; i++) {
-            links[i] = new Link();
             st = new StringTokenizer(br.readLine());
-            links[i].x = Integer.parseInt(st.nextToken());
-            links[i].y = Integer.parseInt(st.nextToken());
-            links[i].c = Integer.parseInt(st.nextToken());
+            s = Integer.parseInt(st.nextToken());
+            e = Integer.parseInt(st.nextToken());
+            c = Integer.parseInt(st.nextToken());
+
+            links[i] = new Link(s, e, c);
             if (i < M) {
-                ans += links[i].c;
+                ans += c;
                 links[i].c = -links[i].c;
             }
         }
 
-        // 간선 가중치 오름차순 정렬
         Arrays.sort(links, (a, b) -> Integer.compare(a.c, b.c));
-
-        added = new boolean[M+K];
-        can = new boolean[M+K];
+        int cnt = 0;
         for (int i = 0, j = 0; i < M+K; i++) {
-            for (; j < M+K && links[i].c == links[j].c; j++) {
-                if (find(links[j].x) != find(links[j].y)) {
+            for (;j < M+K && links[i].c == links[j].c; j++) {
+                if (find(links[j].s) != find(links[j].e)) {
                     can[j] = true;
                 }
             }
 
-            int px = find(links[i].x);
-            int py = find(links[i].y);
-            if (px != py) {
-                ans += links[i].c;
-                added[i] = true;
-                D[py] = px;
+            int ps = find(links[i].s);
+            int pe = find(links[i].e);
+
+            if (ps == pe) {
+                continue;
             }
+
+            if (cnt == N-1) {
+                break;
+            }
+
+            cnt++;
+            ans += links[i].c;
+            D[pe] = ps;
+            added[i] = true;
         }
 
         String ans2 = unique;
@@ -86,17 +93,22 @@ public class source {
         bw.close();
     }
 
-    private static int find(int x) {
-        if (D[x] == x) {
-            return x;
+    private static int find(int s) {
+        if (D[s] == s) {
+            return s;
         } else {
-            return D[x] = find(D[x]);
+            return D[s] = find(D[s]);
         }
     }
+
 }
 
 class Link {
-    int x;
-    int y;
-    int c;
+    int s, e, c;
+
+    Link(int s, int e, int c) {
+        this.s = s;
+        this.e = e;
+        this.c = c;
+    }
 }
