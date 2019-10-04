@@ -1,101 +1,117 @@
 package graph.koitp.jeongwoo_kingdom;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 public class source {
 
-    static int color[];
-    static class Edge {
-        int vA, vB, weight;
-        public Edge(int vA, int vB, int weight) {
-            this.vA = vA;
-            this.vB = vB;
-            this.weight = weight;
+    private static BufferedReader br;
+    private static BufferedWriter bw;
+    private static StringTokenizer st;
+
+    private static int N;
+    private static int[] D;
+
+    // sw 문제풀이반
+    // https://koitp.org/problem/SDS_3_5/read/
+    // 정우왕국, 크루스칼
+    public static void main(String[] args) throws Exception {
+        br = new BufferedReader(new InputStreamReader(System.in));
+        bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        N = Integer.parseInt(br.readLine());
+        D = new int[N+1];
+        for (int i = 0; i <= N; i++) {
+            D[i] = i;
         }
+
+        List<City> cities = new ArrayList<>();
+        int x, y, z;
+        for (int i = 1; i <= N; i++) {
+            st = new StringTokenizer(br.readLine());
+            x = Integer.parseInt(st.nextToken());
+            y = Integer.parseInt(st.nextToken());
+            z = Integer.parseInt(st.nextToken());
+
+            cities.add(new City(x, y, z, i));
+        }
+
+        List<Link> links = new ArrayList<>();
+        // x로 오름차순 정렬
+        Collections.sort(cities, (a, b) -> Integer.compare(a.x, b.x));
+        for (int i = 0; i < N-1; i++) {
+            links.add(new Link(cities.get(i).idx, cities.get(i+1).idx, cities.get(i).cost(cities.get(i+1))));
+        }
+
+        // y로 오름차순 정렬
+        Collections.sort(cities, (a, b) -> Integer.compare(a.y, b.y));
+        for (int i = 0; i < N-1; i++) {
+            links.add(new Link(cities.get(i).idx, cities.get(i+1).idx, cities.get(i).cost(cities.get(i+1))));
+        }
+
+        // z로 오름차순 정렬
+        Collections.sort(cities, (a, b) -> Integer.compare(a.z, b.z));
+        for (int i = 0; i < N-1; i++) {
+            links.add(new Link(cities.get(i).idx, cities.get(i+1).idx, cities.get(i).cost(cities.get(i+1))));
+        }
+        // 이렇게 함으로써 links에 비용이 많이드는 간선이 들어가지 않음
+
+        Collections.sort(links, (a, b) -> Integer.compare(a.c, b.c));
+        long ans = 0;
+        int cnt = 0;
+        for (Link link : links) {
+            int ps = find(link.s);
+            int pe = find(link.e);
+            if (ps == pe) {
+                continue;
+            }
+
+            if (cnt == N-1) {
+                break;
+            }
+
+            cnt++;
+            ans += link.c;
+            D[pe] = ps;
+        }
+
+        bw.write(ans + "\n");
+        bw.close();
     }
-    static class City{
-        int x,y,z;
-        int index;
-        public City(int x,int y,int z,int index){
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.index = index;
-        }
-        static int abs(int a){
-            if(a<0)return -a;
+
+    private static int find(int a) {
+        if (D[a] == a) {
             return a;
-        }
-        static int min2(int a,int b){
-            if(a<b)return a;
-            return b;
-        }
-        static int min(int a,int b,int c){
-            return min2(a,min2(b,c));
-        }
-        int cost(City c){
-            return min(abs(x-c.x),abs(y-c.y),abs(z-c.z));
+        } else {
+            return D[a] = find(D[a]);
         }
     }
-    static int f(int x) {
-        if (color[x] == x) return x;
-        color[x] = f(color[x]);
-        return color[x];
+}
+
+class City {
+    int x, y, z, idx;
+
+    City(int x, int y, int z, int idx) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.idx = idx;
     }
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        int n = scan.nextInt(); //number of Vertex
-        color = new int[n];
-        List<Edge> E = new ArrayList<Edge>();
-        List<City> V = new ArrayList<City>();
-        for (int i = 0; i < n; i++) {
-            int x = scan.nextInt();
-            int y = scan.nextInt();
-            int z = scan.nextInt();
-            V.add(new City(x, y, z, i));
-        }
-        Collections.sort(V, new CompareX());
-        for(int i=0;i<n-1;i++){
-            E.add(new Edge(V.get(i).index,V.get(i+1).index,V.get(i).cost(V.get(i+1))));
-        }
-        Collections.sort(V, new CompareY());
-        for(int i=0;i<n-1;i++){
-            E.add(new Edge(V.get(i).index,V.get(i+1).index,V.get(i).cost(V.get(i+1))));
-        }
-        Collections.sort(V, new CompareZ());
-        for(int i=0;i<n-1;i++){
-            E.add(new Edge(V.get(i).index,V.get(i+1).index,V.get(i).cost(V.get(i+1))));
-        }
-        Collections.sort(E, new CompareE());
-        for (int i = 0; i < n; i++) color[i] = i;
-        long res = 0;
-        for (Edge edge : E) {
-            int p = edge.vA, q = edge.vB;
-            int set_p = f(p), set_q = f(q);
-            if (set_p == set_q) continue;
-            color[set_p] = set_q;
-            res += edge.weight;
-        }
-        System.out.println(res);
+
+    int cost(City c) {
+        return Math.min(Math.abs(this.x - c.x), Math.min(Math.abs(this.y - c.y), Math.abs(this.z - c.z)));
     }
-    static class CompareE implements Comparator<Edge> {
-        public int compare(Edge e1, Edge e2) {
-            return e1.weight-e2.weight;
-        }
-    }
-    static class CompareX implements Comparator<City> {
-        public int compare(City c1, City c2) {
-            return c1.x-c2.x;
-        }
-    }
-    static class CompareY implements Comparator<City> {
-        public int compare(City c1, City c2) {
-            return c1.y-c2.y;
-        }
-    }
-    static class CompareZ implements Comparator<City> {
-        public int compare(City c1, City c2) {
-            return c1.z-c2.z;
-        }
+}
+
+class Link {
+    int s, e, c;
+
+    Link(int s, int e, int c) {
+        this.s = s;
+        this.e = e;
+        this.c = c;
     }
 }
