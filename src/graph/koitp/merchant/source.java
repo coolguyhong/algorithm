@@ -18,27 +18,28 @@ public class source {
     private static int[][] parents;
 
     // koitp.org
+    // https://koitp.org/problem/MERCHANT/read/
     // merchant : lca
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-
-        depth = new int[N+1];
-        links = new ArrayList[N+1];
-        for (int i = 1; i <= N; i++) {
-            links[i] = new ArrayList<>();
-        }
+        N = Integer.parseInt(br.readLine());
 
         int n = N;
         K = 0;
         while (n > 0) {
-            K++;
             n /= 2;
+            K++;
         }
+
+        links = new ArrayList[N+1];
         parents = new int[K][N+1];
+        depth = new int[N+1];
+
+        for (int i = 1; i <= N; i++) {
+            links[i] = new ArrayList<>();
+        }
 
         int a, b;
         for (int i = 0; i < N-1; i++) {
@@ -50,7 +51,7 @@ public class source {
             links[b].add(a);
         }
 
-        bfs();
+        makeGraph();
         fillParents();
 
         long ans = depth[2] - depth[1];
@@ -59,20 +60,20 @@ public class source {
         }
 
         bw.write(ans + "\n");
-        bw.flush();
         bw.close();
     }
 
     private static long lca(int a, int b) {
-        if (depth[a] < depth[b]) {
+        if (depth[b] > depth[a]) {
             int temp = a;
             a = b;
             b = temp;
         }
+
+        int originA = a;
         int originB = b;
 
         int diff = depth[a] - depth[b];
-        long ans = diff;
         int k = 0;
         while (diff > 0) {
             if (diff % 2 == 1) {
@@ -80,13 +81,13 @@ public class source {
             }
             k++;
             diff /= 2;
-         }
-
-        if (a == b) {
-            return ans;
         }
 
-        for (k = K-1; k >= 0; k--) {
+        if (a == b) {
+            return depth[originA] - depth[originB];
+        }
+
+        for (k = K-1; k >=0 ; k--) {
             if (parents[k][a] == parents[k][b]) {
                 continue;
             }
@@ -95,8 +96,12 @@ public class source {
             b = parents[k][b];
         }
 
-        ans += 2 * (depth[originB] - depth[parents[0][b]]);
-        return ans;
+        int lca = parents[0][a];
+
+        long depth1 = depth[originA] - depth[lca];
+        long depth2 = depth[originB] - depth[lca];
+
+        return depth1 + depth2;
     }
 
     private static void fillParents() {
@@ -107,15 +112,16 @@ public class source {
         }
     }
 
-    private static void bfs() {
+    private static void makeGraph() {
         Queue<Integer> q = new LinkedList<>();
-        depth[1] = 1;
         q.add(1);
+        depth[1] = 1;
 
         int n;
         while (!q.isEmpty()) {
             n = q.poll();
             for (int c : links[n]) {
+                // 자기 부모면 가지 않는다.
                 if (parents[0][n] == c) {
                     continue;
                 }
