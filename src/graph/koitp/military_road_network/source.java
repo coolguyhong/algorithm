@@ -14,11 +14,10 @@ public class source {
     private static StringTokenizer st;
 
     private static int N, M, K;
-    private static int[] D;
+    private static int[] par;
+    private static boolean[] can, added;
     private static Link[] links;
-    private static boolean[] added, can;
-    private static final String unique = "unique";
-    private static final String not = "not unique";
+
 
     // sw 문제풀이반
     // https://koitp.org/problem/MILITARY_ROAD_NETWORK/read/
@@ -29,36 +28,37 @@ public class source {
 
         st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-        D = new int[N+1];
-        for (int i = 1; i <= N; i++) {
-            D[i] = i;
-        }
-
         M = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        links = new Link[M+K];
-        added = new boolean[M+K];
+        par = new int[N+1];
+        for (int i = 1; i <= N; i++) {
+            par[i] = i;
+        }
+
         can = new boolean[M+K];
-        int s, e, c;
+        added = new boolean[M+K];
+        links = new Link[M+K];
+        int a, b, c;
         long ans = 0;
         for (int i = 0; i < M+K; i++) {
             st = new StringTokenizer(br.readLine());
-            s = Integer.parseInt(st.nextToken());
-            e = Integer.parseInt(st.nextToken());
+            a = Integer.parseInt(st.nextToken());
+            b = Integer.parseInt(st.nextToken());
             c = Integer.parseInt(st.nextToken());
 
-            links[i] = new Link(s, e, c);
+            links[i] = new Link(a, b, c);
             if (i < M) {
                 ans += c;
                 links[i].c = -links[i].c;
             }
         }
 
-        Arrays.sort(links, (a, b) -> Integer.compare(a.c, b.c));
+        Arrays.sort(links);
+
         int cnt = 0;
         for (int i = 0, j = 0; i < M+K; i++) {
-            for (;j < M+K && links[i].c == links[j].c; j++) {
+            for (; j < M+K && links[i].c == links[j].c; j++) {
                 if (find(links[j].s) != find(links[j].e)) {
                     can[j] = true;
                 }
@@ -71,44 +71,48 @@ public class source {
                 continue;
             }
 
+            added[i] = true;
+            par[pe] = ps;
+            ans += links[i].c;
+            cnt++;
+
             if (cnt == N-1) {
                 break;
             }
-
-            cnt++;
-            ans += links[i].c;
-            D[pe] = ps;
-            added[i] = true;
         }
 
-        String ans2 = unique;
-        for (int i = 0; i < M; i++) {
+        String ans2 = "unique";
+        for (int i = 0; i < M+K; i++) {
             if (!added[i] && can[i]) {
-                ans2 = not;
+                ans2 = "not unique";
                 break;
             }
         }
 
-        bw.write(ans + " " + ans2);
+        bw.write(ans + " " + ans2 + "\n");
         bw.close();
     }
 
     private static int find(int s) {
-        if (D[s] == s) {
+        if (par[s] == s) {
             return s;
         } else {
-            return D[s] = find(D[s]);
+            return par[s] = find(par[s]);
         }
     }
-
 }
 
-class Link {
+class Link implements Comparable<Link> {
     int s, e, c;
 
     Link(int s, int e, int c) {
         this.s = s;
         this.e = e;
         this.c = c;
+    }
+
+    @Override
+    public int compareTo(Link o) {
+        return Integer.compare(this.c, o.c);
     }
 }
