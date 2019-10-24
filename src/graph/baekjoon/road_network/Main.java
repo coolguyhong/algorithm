@@ -135,9 +135,12 @@ public class Main {
         while (!q.isEmpty()) {
             n = q.poll();
             for (Link link : n.links) {
-                if (depth[link.target.no] != 0) {
+                if (parents[0][n.no] == link.target.no) {
                     continue;
                 }
+//                if (depth[link.target.no] != 0) {
+//                    continue;
+//                }
 
                 depth[link.target.no] = depth[n.no] + 1;
                 parents[0][link.target.no] = n.no;
