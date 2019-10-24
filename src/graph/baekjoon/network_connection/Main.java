@@ -18,7 +18,7 @@ public class Main {
 
     // 백준 알고리즘
     // https://www.acmicpc.net/problem/3780
-    // 네트워크 연결
+    // 네트워크 연결, union-find, mst
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -33,8 +33,6 @@ public class Main {
                 D[i] = i;
             }
 
-            int center;
-            int company;
             while (true) {
                 st = new StringTokenizer(br.readLine());
                 String flag = st.nextToken();
@@ -42,25 +40,22 @@ public class Main {
                     break;
                 }
 
+                int company = Integer.parseInt(st.nextToken());
                 if (flag.equals("E")) {
-                    company = Integer.parseInt(st.nextToken());
                     find(company);
                     bw.write(G[company] + "\n");
-                    continue;
+                } else {
+                    int center = Integer.parseInt(st.nextToken());
+                    union(company, center);
                 }
-
-                center = Integer.parseInt(st.nextToken());
-                company = Integer.parseInt(st.nextToken());
-
-                union(center, company);
             }
         }
         bw.close();
     }
 
-    private static void union(int center, int company) {
-        G[center] += Math.abs(center - company) % mod;
-        D[center] = company;
+    private static void union(int company, int center) {
+        G[company] += Math.abs(center - company) % mod;
+        D[company] = center;
     }
 
     private static int find(int a) {
