@@ -1,13 +1,10 @@
-package graph.baekjoon.mst_second;
+package graph.baekjoon.mst_second.impl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
@@ -15,11 +12,11 @@ public class Main {
     private static BufferedWriter bw;
     private static StringTokenizer st;
 
-    private static int V, E, H, minCost, ans;
-    private static int[] parents, visited, depth;
-    private static List<int[]> edges;
-    private static int[] mstEdge; // mst 엣지가 되는 엣지 번호에 cost 저장
-    private static List<int[]>[] trees;
+    private static int V, E, K, minCost, ans;
+    private static int[] parents, depth, visited;
+    private static List<int[]> edges; // edge는 간선정보
+    private static List<int[]>[] trees; // trees는 연결된 간선의 links 정보
+    private static int[] mstEdge; // mst가 되는 edge 학인하기 위한 배열 mst 배열에 1을 넣어줌
     private static int[][] par, maxCost;
 
     // 백준 알고리즘
@@ -34,10 +31,10 @@ public class Main {
         E = Integer.parseInt(st.nextToken());
 
         int v = V;
-        H = 0;
+        K = 0;
         while (v > 0) {
             v /= 2;
-            H++;
+            K++;
         }
 
         trees = new ArrayList[V+1];
@@ -62,6 +59,7 @@ public class Main {
             edges.add(new int[]{i, a, b, c});
         }
 
+        // 최소 스패닝 트리를 구하기 위한 크루스칼
         int ret = kruskal();
         if (ret == -1) {
             bw.write("-1\n");
@@ -91,14 +89,14 @@ public class Main {
 
             int idx = edge[0];
             int cost = edge[3];
-            // tree 만들기
+            // tree 만들기 연결된 간선 정보로 그래프 만들기
             trees[s].add(new int[]{idx, e, cost});
             trees[e].add(new int[]{idx, s, cost});
-            mstEdge[idx] = 1;
+            mstEdge[idx]++;
             minCost += cost;
             cnt++;
         }
-
+        // mst로 연결이 되지 않을 경우 -1 return
         if (cnt != V-1) {
             return -1;
         }
@@ -117,17 +115,16 @@ public class Main {
     private static void secondMst() {
         visited = new int[V+1];
         depth = new int[V+1];
-        par = new int[V+1][H];
-        maxCost = new int[V+1][H];
+        par = new int[K][V+1];
+        maxCost = new int[K][V+1];
 
-        // dfs 돌려서 depth 와 부모 저장
-        dfs(1, 0);
-
-        ans = Integer.MAX_VALUE;
+        // bfs 돌려서 depth와 부모 저장
+        bfs();
+        fillParents();
 
         // tree 로 연결이 되지 않은 간선의 lca 구하기
         for (int[] edge : edges) {
-            if (mstEdge[edge[0]] > 0) { // mst 연결된 간선 패스
+            if (mstEdge[edge[0]] > 0) { // mst 연결된 것 패스
                 continue;
             }
 
@@ -159,45 +156,45 @@ public class Main {
         }
 
         int diff = depth[a] - depth[b];
-        int h = 0;
+        int k = 0;
         while (diff > 0) {
             if (diff % 2 == 1) {
-                if (maxCost[a][h] == c) {
-                    ret = Math.max(ret, getMax(a, h, c));
+                if (maxCost[k][a] == c) {
+                    ret = Math.max(ret, getMax(a, k, c));
                 } else {
-                    ret = Math.max(ret, maxCost[a][h]);
+                    ret = Math.max(ret, maxCost[k][a]);
                 }
-                a = par[a][h];
+                a = par[k][a];
             }
             diff /= 2;
-            h++;
+            k++;
         }
 
         if (a == b) {
             return ret;
         }
 
-        for (h = H-1; h >= 0; h--) {
-            if (par[a][h] == par[b][h]) {
+        for (k = K-1; k >= 0; k--) {
+            if (par[k][a] == par[k][b]) {
                 continue;
             }
-            if (maxCost[a][h] == c) {
-                ret = Math.max(ret, getMax(a, h, c));
+            if (maxCost[k][a] == c) {
+                ret = Math.max(ret, getMax(a, k, c));
             } else {
-                ret = Math.max(ret, maxCost[a][h]);
+                ret = Math.max(ret, maxCost[k][a]);
             }
-            if (maxCost[b][h] == c) {
-                ret = Math.max(ret, getMax(b, h, c));
+            if (maxCost[k][b] == c) {
+                ret = Math.max(ret, getMax(b, k, c));
             } else {
-                ret = Math.max(ret, maxCost[b][h]);
+                ret = Math.max(ret, maxCost[k][b]);
             }
 
-            a = par[a][h];
-            b = par[b][h];
+            a = par[k][a];
+            b = par[k][b];
         }
 
-        ret = Math.max(ret, (maxCost[a][0] == c) ? ret : maxCost[a][0]);
-        ret = Math.max(ret, (maxCost[b][0] == c) ? ret : maxCost[b][0]);
+        ret = Math.max(ret, (maxCost[0][a] == c) ? ret : maxCost[0][a]);
+        ret = Math.max(ret, (maxCost[0][b] == c) ? ret : maxCost[0][b]);
 
         return ret;
     }
@@ -208,44 +205,51 @@ public class Main {
         }
 
         int ret = -1;
-        if (maxCost[a][k-1] == c) {
+        if (maxCost[k-1][a] == c) {
             ret = Math.max(ret, getMax(a, k-1, c));
         } else {
-            ret = Math.max(ret, maxCost[a][k-1]);
+            ret = Math.max(ret, maxCost[k-1][a]);
         }
 
-        if (maxCost[par[a][k-1]][k-1] == c) {
-            ret = Math.max(ret, getMax(par[a][k-1], k-1, c));
+        if (maxCost[k-1][par[k-1][a]] == c) {
+            ret = Math.max(ret, getMax(par[k-1][a], k-1, c));
         } else {
-            ret = Math.max(ret, maxCost[par[a][k-1]][k-1]);
+            ret = Math.max(ret, maxCost[k-1][par[k-1][a]]);
         }
 
         return ret;
     }
 
-    private static void dfs(int n, int p) {
-        if (visited[n] != 0) {
-            return;
+    private static void fillParents() {
+        for (int k = 1; k < K; k++) {
+            for (int i = 1; i <= V; i++) {
+                par[k][i] = par[k-1][par[k-1][i]];
+                maxCost[k][i] = Math.max(maxCost[k-1][i], maxCost[k-1][par[k-1][i]]);
+            }
+        }
+    }
+
+    private static void bfs() {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(1);
+        depth[1] = 1;
+
+        int n;
+        while (!q.isEmpty()) {
+            n = q.poll();
+            for (int[] c : trees[n]) {
+                int next = c[1];
+                int cost = c[2];
+                if (par[0][n] == next) {
+                    continue;
+                }
+
+                par[0][next] = n;
+                maxCost[0][next] = cost;
+                depth[next] = depth[n] + 1;
+                q.add(next);
+            }
         }
 
-        visited[n]++;
-        for (int[] node : trees[n]) {
-            int next = node[1];
-            int cost = node[2];
-
-            if (visited[next] != 0) {
-                continue;
-            }
-
-            depth[next] = depth[n] + 1;
-            par[next][0] = n;
-            maxCost[next][0] = cost;
-
-            for (int i = 1; i < H; i++) {
-                par[next][i] = par[par[next][i-1]][i-1];
-                maxCost[next][i] = Math.max(maxCost[next][i-1], maxCost[par[next][i-1]][i-1]);
-            }
-            dfs(next, n);
-        }
     }
 }
