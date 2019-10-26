@@ -14,10 +14,9 @@ public class source {
     private static StringTokenizer st;
 
     private static int N, M, K;
-    private static int[] par;
+    private static int [] par;
     private static boolean[] can, added;
     private static Link[] links;
-
 
     // sw 문제풀이반
     // https://koitp.org/problem/MILITARY_ROAD_NETWORK/read/
@@ -36,27 +35,27 @@ public class source {
             par[i] = i;
         }
 
-        can = new boolean[M+K];
-        added = new boolean[M+K];
         links = new Link[M+K];
-        int a, b, c;
+        int s, e, c;
         long ans = 0;
         for (int i = 0; i < M+K; i++) {
             st = new StringTokenizer(br.readLine());
-            a = Integer.parseInt(st.nextToken());
-            b = Integer.parseInt(st.nextToken());
+            s = Integer.parseInt(st.nextToken());
+            e = Integer.parseInt(st.nextToken());
             c = Integer.parseInt(st.nextToken());
 
-            links[i] = new Link(a, b, c);
+            links[i] = new Link(s, e, c);
             if (i < M) {
                 ans += c;
-                links[i].c = -links[i].c;
+                links[i].c = -c;
             }
         }
 
         Arrays.sort(links);
 
         int cnt = 0;
+        can = new boolean[M+K];
+        added = new boolean[M+K];
         for (int i = 0, j = 0; i < M+K; i++) {
             for (; j < M+K && links[i].c == links[j].c; j++) {
                 if (find(links[j].s) != find(links[j].e)) {
@@ -66,7 +65,6 @@ public class source {
 
             int ps = find(links[i].s);
             int pe = find(links[i].e);
-
             if (ps == pe) {
                 continue;
             }
@@ -82,8 +80,8 @@ public class source {
         }
 
         String ans2 = "unique";
-        for (int i = 0; i < M+K; i++) {
-            if (!added[i] && can[i]) {
+        for (int i = 0; i < M; i++) {
+            if (can[i] && !added[i]) {
                 ans2 = "not unique";
                 break;
             }
@@ -104,7 +102,6 @@ public class source {
 
 class Link implements Comparable<Link> {
     int s, e, c;
-
     Link(int s, int e, int c) {
         this.s = s;
         this.e = e;
