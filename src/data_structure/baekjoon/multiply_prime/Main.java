@@ -19,6 +19,7 @@ public class Main {
 	private static int[] prime;
 
 	// 백준 알고리즘
+	// https://www.acmicpc.net/problem/2014
 	// 소수의 곱 : 우선순위 큐
 	public static void main(String[] args) throws IOException {
 		br = new BufferedReader(new InputStreamReader(System.in));
@@ -40,7 +41,7 @@ public class Main {
 		for (int i = 1; i <= N; i++) {
 			ans = pq.poll();
 			for (int j = 1; j <= K; j++) {
-				if (prime[j] * ans <= 2147483647) {
+				if (prime[j] * ans <= Integer.MAX_VALUE) {
 					pq.add(prime[j] * (int) ans);
 				}
 				
@@ -50,8 +51,6 @@ public class Main {
 			}
 		}
 		bw.write(ans + "\n");
-		bw.flush();
 		bw.close();
 	}
-
 }
