@@ -33,7 +33,7 @@ public class Main {
         }
 
         D = new int[k + 1];
-        Arrays.fill(D, 10001);
+        Arrays.fill(D, k + 1);
 
         D[0] = 0;
         for (int i = 0; i < n; i++) {
@@ -42,7 +42,7 @@ public class Main {
             }
         }
 
-        bw.write((D[k] == 10001 ? -1 : D[k]) + "\n");
+        bw.write((D[k] == k + 1 ? -1 : D[k]) + "\n");
         bw.close();
     }
 }
