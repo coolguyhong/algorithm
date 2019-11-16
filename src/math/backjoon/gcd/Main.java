@@ -1,4 +1,4 @@
-package etc.baekjoon.gcd;
+package math.backjoon.gcd;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,7 +13,6 @@ public class Main {
     private static BufferedWriter bw;
     private static StringTokenizer st;
 
-    private static final int MAX = 1000000000;
     private static int A = 40000;
     private static int[] prime = new int[A];
     private static int cnt;
