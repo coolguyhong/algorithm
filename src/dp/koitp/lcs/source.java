@@ -18,9 +18,11 @@ public class source {
     private static int aLength, bLength;
     private static int[][] D;
     private static int[][] path;
+    private static int ans;
 
     // koitp.org
     // dp.koitp.lcs: DP
+    // lcs
     public static void main(String[] args) throws Exception {
         br = new BufferedReader(new InputStreamReader(System.in));
         bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -61,6 +63,7 @@ public class source {
             }
         }
         bw.write(sb.reverse().toString() + "\n");
+        bw.write(ans + "\n");
         bw.flush();
         bw.close();
     }
@@ -77,6 +80,7 @@ public class source {
                 if (A[i] == B[j]) {
                     D[i][j] = D[i-1][j-1]+1;
                     path[i][j] = 3;
+                    ans++;
                 } else {
                     D[i][j] = max(D[i-1][j], D[i][j-1]);
                     if (D[i][j] == D[i-1][j]) {
