@@ -11,8 +11,11 @@ public class Main {
 	
 	private static int[] arrN, arrM;
 	private static int n, m;
-	private static int[][] D;
+	private static int[][] D; // arrN, arrM의 각각 idx에서 얻을 수 있는 증가수열의 최고 길이
 
+	// 알고스팟 문제해결전략
+	// https://www.algospot.com/judge/problem/read/JLIS
+	// 합친 jlis dp
 	public static void main(String[] args) throws Exception {
 		br = new BufferedReader(new InputStreamReader(System.in));
 		bw = new BufferedWriter(new OutputStreamWriter(System.out));
