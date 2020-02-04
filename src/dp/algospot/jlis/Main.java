@@ -4,71 +4,72 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 public class Main {
+
+	private static BufferedReader br;
+	private static BufferedWriter bw;
+	private static StringTokenizer st;
 	
-	private static int[] arr1 = new int[100];
-	private static int[] arr2 = new int[100];
-	private static int n,m;
-	private static int[] jlis = new int[200];
+	private static int[] arrN, arrM;
+	private static int n, m;
+	private static int[][] D;
 
-	public static void main(String[] args) {
-		InputReader input = new InputReader(System.in);
+	public static void main(String[] args) throws Exception {
+		br = new BufferedReader(new InputStreamReader(System.in));
+		bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		int testCase = input.nextInt();
-		while (testCase > 0) {
-			n = input.nextInt();
-			m = input.nextInt();
-			arr1 = new int[n];
-			arr2 = new int[m];
-			
-			for (int i = 0; i < arr1.length; ++i) {
-				arr1[i] = input.nextInt();
+		int testCase = Integer.parseInt(br.readLine());
+		while (testCase-- > 0) {
+			st = new StringTokenizer(br.readLine());
+			n = Integer.parseInt(st.nextToken());
+			m = Integer.parseInt(st.nextToken());
+
+			arrN = new int[n+1];
+			arrM = new int[m+1];
+
+			st = new StringTokenizer(br.readLine());
+			for (int i = 1; i <= n; i++) {
+				arrN[i] = Integer.parseInt(st.nextToken());
 			}
-			
-			for (int j = 0; j < arr2.length; ++j) {
-				arr1[j] = input.nextInt();
+
+			st = new StringTokenizer(br.readLine());
+			for (int i = 1; i <= m; i++) {
+				arrM[i] = Integer.parseInt(st.nextToken());
 			}
-			System.out.println(arr1[0]);
-			jlis();
-			testCase--;
-			
+
+			D = new int[n+2][m+2];
+
+			bw.write((jlis(0, 0) - 2) + "\n" );
 		}
+		bw.close();
 	}
 
-	private static void jlis() {
-		int max = 1;
+	private static int jlis(int idxN, int idxM) {
+		if (D[idxN+1][idxM+1] != 0) {
+			return D[idxN+1][idxM+1];
+		}
 
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
-				if (jlis[0] == 0) {
+		// 최소 길이 arrN, arrB의 원소 2개
+		int res = 2;
 
-				}
+		// 둘 중 작은 원소부터 시작
+		long a = idxN == 0 ? Long.MIN_VALUE : arrN[idxN];
+		long b = idxM == 0 ? Long.MIN_VALUE : arrM[idxM];
+		long maxElement = Math.max(a, b);
+
+		// 다음 원소 시작
+		for (int nextN = idxN+1; nextN <= n; nextN++) {
+			if (maxElement < arrN[nextN]) {
+				res = Math.max(res, jlis(nextN, idxM) + 1);
 			}
 		}
 
-	}
-
-	static class InputReader {
-		public BufferedReader reader;
-		public StringTokenizer tokenizer;
-
-		public InputReader(InputStream stream) {
-			reader = new BufferedReader(new InputStreamReader(stream), 32768);
-			tokenizer = null;
-		}
-
-		public String next() {
-			while (tokenizer == null || !tokenizer.hasMoreTokens()) {
-				try {
-					tokenizer = new StringTokenizer(reader.readLine());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		for (int nextM = idxM+1; nextM <= m; nextM++) {
+			if (maxElement < arrM[nextM]) {
+				res = Math.max(res, jlis(idxN, nextM) + 1);
 			}
-			return tokenizer.nextToken();
 		}
 
-		public int nextInt() {
-			return Integer.parseInt(next());
-		}
+		D[idxN+1][idxM+1] = res;
+		return res;
 	}
 }
