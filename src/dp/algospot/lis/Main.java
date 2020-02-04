@@ -1,72 +1,49 @@
 package dp.algospot.lis;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.StringTokenizer;
 
 public class Main {
-	private static int[] SEQUENCE = new int[500];
-	private static int[] LIS = new int[500];
-	private static int length;
 
-	public static void main(String[] args) {
-		InputReader input = new InputReader(System.in);
-		int testCase = input.nextInt();
-		while (testCase > 0) {
-			length = input.nextInt();
-			for (int i = 0; i < length; i++) {
-				SEQUENCE[i] = input.nextInt();
+	private static BufferedReader br;
+	private static BufferedWriter bw;
+	private static StringTokenizer st;
+
+	private static int N;
+	private static int[] arr, D;
+
+	public static void main(String[] args) throws Exception {
+		br = new BufferedReader(new InputStreamReader(System.in));
+		bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+		int testCase = Integer.parseInt(br.readLine());
+		while (testCase-- > 0) {
+			N = Integer.parseInt(br.readLine());
+			arr = new int[N+1];
+			D = new int[N+2];
+
+			st = new StringTokenizer(br.readLine());
+			for (int i = 1; i <= N; i++) {
+				arr[i] = Integer.parseInt(st.nextToken());
 			}
-			lis();
-			testCase--;
+
+			bw.write((lis3(0) - 1) + "\n");
 		}
+		bw.close();
 	}
 
-	private static void lis() {
-		int max = 1;
-		LIS[0] = 1;
+	private static int lis3(int s) {
+		if (D[s+1] != 0) {
+			return D[s+1];
+		}
 
-		for (int i = 1; i < length; i++) {
-			LIS[i] = 1;
-
-			for (int j = 0; j < i; j++) {
-				if (SEQUENCE[i] > SEQUENCE[j] && LIS[j] + 1 > LIS[i]) {
-					LIS[i] = LIS[j] + 1;
-				}
-			}
-
-			if (max < LIS[i]) {
-				max = LIS[i];
+		int ret = 1;
+		for (int next = s+1; next <= N; next++) {
+			if (arr[s] < arr[next]) {
+				ret = Math.max(ret, lis3(next) + 1);
 			}
 		}
-
-		System.out.println(max);
-	}
-
-	static class InputReader {
-		public BufferedReader reader;
-		public StringTokenizer tokenizer;
-
-		public InputReader(InputStream stream) {
-			reader = new BufferedReader(new InputStreamReader(stream), 32768);
-			tokenizer = null;
-		}
-
-		public String next() {
-			while (tokenizer == null || !tokenizer.hasMoreTokens()) {
-				try {
-					tokenizer = new StringTokenizer(reader.readLine());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			return tokenizer.nextToken();
-		}
-
-		public int nextInt() {
-			return Integer.parseInt(next());
-		}
+		D[s+1] = ret;
+		return ret;
 	}
 }
